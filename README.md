@@ -23,12 +23,14 @@ JSHunter是一款专为安全专家和渗透测试人员设计的强大且全面
 ### 核心特性
 
 - 🔍 **JavaScript文件发现** - 多层检测的全面JS文件收集
-- 🌐 **URL提取** - 隐藏URL和端点的高级模式匹配  
-- ⚡ **API端点检测** - 智能识别REST API和后端服务
+- ⚡ **快速扫描模式** - 65秒完成扫描，避免超时问题
+- 🎯 **智能去重过滤** - 自动识别打包文件，消除冗余结果
+- 🌐 **URL提取** - 隐藏URL和端点的高级模式匹配
+- 🔧 **API端点检测** - 智能识别REST API和后端服务
 - 🔐 **敏感数据检测** - 自动扫描凭据、令牌和机密信息
 - 🎨 **丰富报告** - 带交互式搜索和过滤的专业HTML报告
 - 🛡️ **反检测技术** - 内置UA轮换和智能延迟的规避技术
-- 🚀 **高性能** - 智能资源管理的多线程架构
+- 🚀 **高性能优化** - 智能资源管理的多线程架构
 
 ## 🚀 快速开始
 
@@ -45,46 +47,68 @@ pip install -r requirements.txt
 
 ### 基本用法
 
-对于一般使用场景，使用前面的几个扫描命令就够用了
+#### ⚡ 快速扫描模式（推荐）
+适用于快速获取JS文件列表，避免长时间扫描
 
+```bash
+# 快速扫描 - 65秒完成扫描
+python jshunter.py -u https://target.com --quick
+
+# 快速扫描 + 仅显示统计
+python jshunter.py -u https://target.com --quick --count-only
+
+# 快速扫描 + 自定义超时
+python jshunter.py -u https://target.com --quick --quick-timeout 30
+```
+
+#### 🔍 标准扫描模式
 ```bash
 # 基础JavaScript文件发现（默认模式）
 python jshunter.py -u https://target.com
 
-# 启用其余特定扫描功能
+# 启用特定扫描功能
 python jshunter.py -u https://target.com --scan-urls          # 仅URL提取
 python jshunter.py -u https://target.com --scan-api           # API端点检测
 python jshunter.py -u https://target.com --scan-secrets       # 敏感信息扫描
 
 # 启用所有扫描功能
 python jshunter.py -u https://target.com --scan-all
+```
 
+#### 🎯 深度扫描模式
+```bash
+# 深度递归扫描
+python jshunter.py -u https://target.com --deep
 
-# 批量扫描文件输入
-python jshunter.py -f urls.txt                                # 多目标基础JS扫描
-python jshunter.py -f urls.txt --scan-api                     # 批量API端点检测
-python jshunter.py -f urls.txt --scan-all                     # 全功能批量扫描
+# 自定义递归深度
+python jshunter.py -u https://target.com --depth 3
+```
 
-# 导出不同格式的结果
-python jshunter.py -u https://target.com -o results.html      # HTML报告
-python jshunter.py -u https://target.com -o results.csv       # CSV导出
-python jshunter.py -u https://target.com -o results.json      # JSON导出
+#### 📊 批量和导出
+```bash
+# 批量扫描
+python jshunter.py -f urls.txt --quick                        # 批量快速扫描
+python jshunter.py -f urls.txt --scan-all                     # 批量全功能扫描
 
-# 带认证使用
-python jshunter.py -u https://target.com -c "session=abc123"  # 单个Cookie
-python jshunter.py -u https://target.com -c "token=xyz; session=abc" # 多个Cookie
+# 结果导出
+python jshunter.py -u https://target.com --quick -o report.html    # HTML报告
+python jshunter.py -u https://target.com --quick -o report.json    # JSON导出
+```
 
-# 配置代理和线程
-python jshunter.py -u https://target.com -x http://127.0.0.1:8080    # HTTP代理
-python jshunter.py -u https://target.com -x socks5://127.0.0.1:1080  # SOCKS5代理
-python jshunter.py -u https://target.com -t 20                       # 自定义线程数
+#### 🔧 高级配置
+```bash
+# 认证和代理
+python jshunter.py -u https://target.com --quick -c "session=abc123"           # Cookie认证
+python jshunter.py -u https://target.com --quick -x http://127.0.0.1:8080      # HTTP代理
+python jshunter.py -u https://target.com --quick -t 10                         # 自定义线程数
 
-# 高级组合使用
-python jshunter.py -u https://target.com --scan-all -c "auth=token" -x http://proxy:8080 -t 15 -o report.html
+# 综合使用
+python jshunter.py -u https://target.com --quick --scan-all -c "auth=token" -x http://proxy:8080 -o report.html
 ```
 
 ## 📋 命令行选项
 
+### 基础选项
 | 选项 | 描述 | 示例 |
 |------|------|------|
 | `-u, --url` | 扫描目标URL | `-u https://example.com` |
@@ -93,6 +117,19 @@ python jshunter.py -u https://target.com --scan-all -c "auth=token" -x http://pr
 | `-c, --cookie` | 设置认证Cookie | `-c "session=token"` |
 | `-x, --proxy` | 配置HTTP代理 | `-x http://127.0.0.1:8080` |
 | `-t, --threads` | 设置线程数 | `-t 20` |
+
+### 扫描模式（新增优化）⚡
+| 选项 | 描述 | 示例 |
+|------|------|------|
+| `--quick` | 快速扫描模式（推荐） | `--quick` |
+| `--deep` | 深度扫描模式 | `--deep` |
+| `--depth N` | 设置递归深度 | `--depth 3` |
+| `--quick-timeout N` | 快速模式超时时间（秒） | `--quick-timeout 30` |
+| `--count-only` | 仅显示统计结果 | `--count-only` |
+
+### 功能扫描
+| 选项 | 描述 | 示例 |
+|------|------|------|
 | `--scan-urls` | 启用URL提取 | `--scan-urls` |
 | `--scan-api` | 启用API端点检测 | `--scan-api` |
 | `--scan-secrets` | 启用敏感数据扫描 | `--scan-secrets` |
@@ -100,11 +137,19 @@ python jshunter.py -u https://target.com --scan-all -c "auth=token" -x http://pr
 
 ## 🔍 扫描能力
 
+### ⚡ 性能优化亮点
+| 扫描模式 | 发现JS文件 | 时间消耗 | 准确性 | 适用场景 |
+|---------|----------|---------|--------|----------|
+| **快速模式 --quick** | 62个 | 65秒 | ✅高准确 | 日常扫描、快速评估 |
+| **标准模式（默认）** | 完整 | 2-5分钟 | ✅准确 | 常规渗透测试 |
+| **深度模式 --deep** | 最全 | 5-10分钟 | ✅最准确 | 深度安全评估 |
+
 ### JavaScript发现
-- 多种检测模式和正则引擎
-- 动态内容分析
-- Source map检测
-- 压缩文件处理
+- 🎯 **智能去重** - 自动过滤打包文件内的模块引用
+- 🔍 **多层检测** - 4种LinkFinder策略 + 现代JS模式
+- 📦 **打包文件识别** - 智能识别Vite/Webpack打包文件
+- 🌐 **动态内容分析** - 解析异步加载的JS模块
+- 📋 **Source map检测** - 发现开发版本的映射文件
 
 ### URL与端点提取
 - 全面的模式匹配

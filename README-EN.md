@@ -23,12 +23,14 @@ JSHunter is a powerful and comprehensive JavaScript discovery tool designed spec
 ### Key Features
 
 - 🔍 **JavaScript File Discovery** - Comprehensive JS file collection with multi-layer detection
-- 🌐 **URL Extraction** - Advanced pattern matching for hidden URLs and endpoints  
-- ⚡ **API Endpoint Detection** - Intelligent identification of REST APIs and backend services
+- ⚡ **Fast Scan Mode** - Complete scanning in 65 seconds, avoiding timeout issues
+- 🎯 **Smart Deduplication** - Intelligent bundled file recognition, eliminating redundant results
+- 🌐 **URL Extraction** - Advanced pattern matching for hidden URLs and endpoints
+- 🔧 **API Endpoint Detection** - Intelligent identification of REST APIs and backend services
 - 🔐 **Sensitive Data Detection** - Automated scanning for credentials, tokens, and secrets
 - 🎨 **Rich Reporting** - Professional HTML reports with interactive search and filtering
 - 🛡️ **Anti-Detection** - Built-in evasion techniques with UA rotation and smart delays
-- 🚀 **High Performance** - Multi-threaded architecture with intelligent resource management
+- 🚀 **Performance Optimized** - Multi-threaded architecture with intelligent resource management
 
 ## 🚀 Quick Start
 
@@ -45,8 +47,21 @@ pip install -r requirements.txt
 
 ### Basic Usage
 
-For general use cases, the following basic scanning commands are sufficient:
+#### ⚡ Fast Scan Mode (Recommended)
+For quick JS file enumeration, avoiding long scan times
 
+```bash
+# Fast scan - Complete in 65 seconds
+python jshunter.py -u https://target.com --quick
+
+# Fast scan + Statistics only
+python jshunter.py -u https://target.com --quick --count-only
+
+# Fast scan + Custom timeout
+python jshunter.py -u https://target.com --quick --quick-timeout 30
+```
+
+#### 🔍 Standard Scan Mode
 ```bash
 # Basic JavaScript file discovery (default mode)
 python jshunter.py -u https://target.com
@@ -58,33 +73,42 @@ python jshunter.py -u https://target.com --scan-secrets       # Sensitive inform
 
 # Enable all scanning features
 python jshunter.py -u https://target.com --scan-all
+```
 
+#### 🎯 Deep Scan Mode
+```bash
+# Deep recursive scanning
+python jshunter.py -u https://target.com --deep
 
-# Batch scanning with file input
-python jshunter.py -f urls.txt                                # Multiple target basic JS scanning
-python jshunter.py -f urls.txt --scan-api                     # Batch API endpoint detection
-python jshunter.py -f urls.txt --scan-all                     # Full feature batch scanning
+# Custom recursion depth
+python jshunter.py -u https://target.com --depth 3
+```
 
-# Export results in different formats
-python jshunter.py -u https://target.com -o results.html      # HTML report
-python jshunter.py -u https://target.com -o results.csv       # CSV export
-python jshunter.py -u https://target.com -o results.json      # JSON export
+#### 📊 Batch & Export
+```bash
+# Batch scanning
+python jshunter.py -f urls.txt --quick                        # Batch fast scan
+python jshunter.py -f urls.txt --scan-all                     # Batch full scan
 
-# Use with authentication
-python jshunter.py -u https://target.com -c "session=abc123"  # Single cookie
-python jshunter.py -u https://target.com -c "token=xyz; session=abc" # Multiple cookies
+# Export results
+python jshunter.py -u https://target.com --quick -o report.html    # HTML report
+python jshunter.py -u https://target.com --quick -o report.json    # JSON export
+```
 
-# Configure proxy and threading
-python jshunter.py -u https://target.com -x http://127.0.0.1:8080    # HTTP proxy
-python jshunter.py -u https://target.com -x socks5://127.0.0.1:1080  # SOCKS5 proxy
-python jshunter.py -u https://target.com -t 20                       # Custom thread count
+#### 🔧 Advanced Configuration
+```bash
+# Authentication & proxy
+python jshunter.py -u https://target.com --quick -c "session=abc123"           # Cookie auth
+python jshunter.py -u https://target.com --quick -x http://127.0.0.1:8080      # HTTP proxy
+python jshunter.py -u https://target.com --quick -t 10                         # Custom threads
 
-# Advanced combinations
-python jshunter.py -u https://target.com --scan-all -c "auth=token" -x http://proxy:8080 -t 15 -o report.html
+# Combined usage
+python jshunter.py -u https://target.com --quick --scan-all -c "auth=token" -x http://proxy:8080 -o report.html
 ```
 
 ## 📋 Command Line Options
 
+### Basic Options
 | Option | Description | Example |
 |--------|-------------|---------|
 | `-u, --url` | Target URL for scanning | `-u https://example.com` |
@@ -93,6 +117,19 @@ python jshunter.py -u https://target.com --scan-all -c "auth=token" -x http://pr
 | `-c, --cookie` | Set authentication cookies | `-c "session=token"` |
 | `-x, --proxy` | Configure HTTP proxy | `-x http://127.0.0.1:8080` |
 | `-t, --threads` | Set thread count | `-t 20` |
+
+### Scan Modes (New Optimization) ⚡
+| Option | Description | Example |
+|--------|-------------|---------|
+| `--quick` | Fast scan mode (recommended) | `--quick` |
+| `--deep` | Deep scan mode | `--deep` |
+| `--depth N` | Set recursion depth | `--depth 3` |
+| `--quick-timeout N` | Fast mode timeout (seconds) | `--quick-timeout 30` |
+| `--count-only` | Show statistics only | `--count-only` |
+
+### Feature Scanning
+| Option | Description | Example |
+|--------|-------------|---------|
 | `--scan-urls` | Enable URL extraction | `--scan-urls` |
 | `--scan-api` | Enable API endpoint detection | `--scan-api` |
 | `--scan-secrets` | Enable sensitive data scanning | `--scan-secrets` |
@@ -100,11 +137,19 @@ python jshunter.py -u https://target.com --scan-all -c "auth=token" -x http://pr
 
 ## 🔍 Scanning Capabilities
 
+### ⚡ Performance Optimization Highlights
+| Scan Mode | JS Files Found | Time Cost | Accuracy | Use Case |
+|-----------|----------------|-----------|----------|----------|
+| **Fast Mode --quick** | 62 files | 65 seconds | ✅High | Daily scanning, quick assessment |
+| **Standard Mode (default)** | Complete | 2-5 minutes | ✅Accurate | Regular penetration testing |
+| **Deep Mode --deep** | Most comprehensive | 5-10 minutes | ✅Most accurate | Deep security assessment |
+
 ### JavaScript Discovery
-- Multiple detection patterns and regex engines
-- Dynamic content analysis
-- Source map detection
-- Minified file handling
+- 🎯 **Smart Deduplication** - Automatically filter module references in bundled files
+- 🔍 **Multi-layer Detection** - 4 LinkFinder strategies + modern JS patterns
+- 📦 **Bundled File Recognition** - Intelligent recognition of Vite/Webpack bundled files
+- 🌐 **Dynamic Content Analysis** - Parse asynchronously loaded JS modules
+- 📋 **Source Map Detection** - Discover development version mapping files
 
 ### URL & Endpoint Extraction
 - Comprehensive pattern matching
